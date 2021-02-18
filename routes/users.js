@@ -45,7 +45,7 @@ router.post('/signin', async function (req, res, next) {
   }
 });
 
-router.post('/signup', async (req, res, next) => {
+router.post('/signup', locker.unlock('authdeputy:admin'), async (req, res, next) => {
   try {
     let has_superuser = await User.findOne({ is_superuser: true });
     if (!has_superuser) {
