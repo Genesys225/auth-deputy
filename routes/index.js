@@ -94,11 +94,11 @@ router.get('/authenticate', locker.unlock(), async (req, res, next) => {
         }
       });
     }
+    if (req.query.auth_code_redirect && req.query.callback) {
+      res.setHeader('X-Redirect-To', req.query.callback)
+      res.redirect('302', '/user/login');
+    }
     if (!accessFlag) {
-      if (req.query.auth_code_redirect && req.query.callback) {
-        res.setHeader('X-Redirect-To', req.query.callback)
-        res.redirect('302', '/user/login');
-      }
       throw {
         status: 403,
         message: `[SCOPE ERROR] - This route requires '${scopeAccessNeeded}' scope.`,
