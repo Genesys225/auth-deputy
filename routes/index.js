@@ -79,27 +79,7 @@ router.get('/.well-known/jwks.json', async function (req, res, next) {
     next(err);
   }
 });
-router.get('/authorize', locker.unlock(), async (req, res, next) => {
-  let scopeAccessNeeded = '';
-  let accessFlag = true;
-  if (req.query.scopes && !req.user.scopes.includes('authdeputy:admin')) {
-    let avaialbe_scopes = req.user.scopes ? req.user.scopes : [];
-    req.query.scopes.split(',').map(async (e) => {
-      if (!avaialbe_scopes.includes(e)) {
-        scopeAccessNeeded = e;
-        accessFlag = false;
-        return false;
-      }
-    });
-    if (!accessFlag) {
-      res.setHeader('X-Redirect-To', req.originalUrl)
-      res.redirect('302', '/user/login');
-    }
-    else {
-      res.reply({ data: req.user });
-    }
-  }
-})
+
 router.get('/authenticate', locker.unlock(), async (req, res, next) => {
   try {
     let accessFlag = true;
@@ -115,6 +95,10 @@ router.get('/authenticate', locker.unlock(), async (req, res, next) => {
       });
     }
     if (!accessFlag)
+      if (req.query.auth_code_redirect && req.query.callback) {
+        res.setHeader('X-Redirect-To', req.query.callback)
+        res.redirect('302', '/user/login');
+      }
       throw {
         status: 403,
         message: `[SCOPE ERROR] - This route requires '${scopeAccessNeeded}' scope.`,
