@@ -17,9 +17,7 @@ let data = {
       if (!authHeader && request.query['access_token']) {
         authHeader = 'Bearer ' + request.query['access_token'];
       }
-      if (req.query['auth_code_redirect'] && req.query.callback) {
-        res.setHeader('X-Redirect-To', req.query.callback);
-      }
+  
       if (typeof authHeader !== 'undefined' && authHeader.includes('Bearer ')) {
         authHeader = authHeader.substring(7);
         jwt.verify(
