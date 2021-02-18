@@ -85,10 +85,7 @@ router.get('/authenticate', locker.unlock(), async (req, res, next) => {
     let accessFlag = true;
     let scopeAccessNeeded = '';
     if (req.query.scopes && !req.user.scopes.includes('authdeputy:admin')) {
-      if (req.query.auth_code_redirect && req.query.callback) {
-        res.setHeader('X-Redirect-To', req.query.callback)
-        res.redirect('302', '/user/login');
-      }
+      
       let avaialbe_scopes = req.user.scopes ? req.user.scopes : [];
       req.query.scopes.split(',').map(async (e) => {
         if (!avaialbe_scopes.includes(e)) {
